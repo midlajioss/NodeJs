@@ -1,20 +1,14 @@
-const pool = require('./db');
+const { Pool } = require('pg');
 
-const createUsersTable = async () => {
-  try {
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        email VARCHAR(100) UNIQUE NOT NULL,
-        password TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-    console.log('✅ Users table created successfully');
-  } catch (err) {
-    console.error('❌ Error creating users table:', err);
+const pool = new Pool({
+  connectionString: 'postgresql://neondb_owner:npg_WnfVhqXpM75m@ep-odd-truth-a5oxw2m9-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require',
+  ssl: {
+    rejectUnauthorized: false, // Required for Neon
   }
-};
+});
 
-createUsersTable();
+pool.connect()
+  .then(() => console.log('Connected to PostgreSQL on Neon.tech'))
+  .catch(err => console.error('Connection error:', err));
+
+module.exports = pool;
